@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>お寺をより良くしていくためのアンケート</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ===== 設定はスクリプト冒頭の CONFIG で変更できます ===== */
+:root{
+  --bg:#f6f1e7; --paper:#fffdf8; --ink:#2b2621; --sub:#7a6f63; --line:#e2d8c8;
+  --accent:#8c2f1e; --accent-soft:#f3e3dc; --gold:#b8862b; --ok:#3d6b4f;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Zen Kaku Gothic New",system-ui,sans-serif;-webkit-text-size-adjust:100%}
+.wrap{max-width:560px;margin:0 auto;padding:28px 18px 80px}
+header{text-align:center;margin-bottom:26px}
+.mon{width:46px;height:46px;margin:0 auto 10px;border:1.5px solid var(--accent);border-radius:50%;display:grid;place-items:center;color:var(--accent);font-family:"Shippori Mincho",serif;font-size:20px}
+h1{font-family:"Shippori Mincho",serif;font-weight:700;font-size:22px;letter-spacing:.08em;margin:0 0 8px}
+.lead{color:var(--sub);font-size:14px;line-height:1.8;margin:0}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:20px 18px;margin-bottom:14px}
+.q{font-weight:700;font-size:16px;margin:0 0 4px;display:flex;gap:10px;align-items:baseline}
+.q .n{font-family:"Shippori Mincho",serif;color:var(--accent);font-size:15px;min-width:1.4em}
+.hint{color:var(--sub);font-size:12.5px;margin:0 0 12px 2.1em}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:10px 14px;font-size:14.5px;color:var(--ink);cursor:pointer;font-family:inherit;line-height:1.2;transition:all .15s}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.stars{display:flex;gap:6px;justify-content:center;margin-top:6px}
+.star{background:none;border:none;font-size:36px;line-height:1;color:#d9cfbf;cursor:pointer;padding:2px}
+.star.on{color:var(--gold)}
+.starlabel{text-align:center;color:var(--sub);font-size:13px;margin-top:6px;min-height:1.2em}
+textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:12px;font-family:inherit;font-size:15px;line-height:1.8;background:#fff;color:var(--ink);resize:vertical}
+textarea:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
+.hidden{display:none}
+.btn{display:block;width:100%;border:none;border-radius:12px;padding:16px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;text-align:center;text-decoration:none}
+.btn-main{background:var(--accent);color:#fff}
+.btn-main:disabled{background:#cbbfae;cursor:not-allowed}
+.btn-sub{background:#fff;color:var(--accent);border:1px solid var(--accent);padding:12px;font-size:14.5px}
+.btn-google{background:#fff;color:var(--ink);border:1.5px solid var(--ink)}
+.row{display:flex;gap:8px;margin-top:10px}
+.row .btn{flex:1}
+#result h2{font-family:"Shippori Mincho",serif;font-size:18px;margin:0 0 4px}
+.count{text-align:right;color:var(--sub);font-size:12px;margin-top:4px}
+.steps{margin:16px 0 0;padding:14px 16px;background:var(--bg);border-radius:10px;font-size:13.5px;line-height:1.9;color:var(--ink)}
+.steps ol{margin:0;padding-left:1.3em}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:var(--ok);color:#fff;padding:12px 20px;border-radius:999px;font-size:14px;opacity:0;transition:all .25s;pointer-events:none;z-index:10}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.note{color:var(--sub);font-size:12px;line-height:1.8;text-align:center;margin-top:18px}
+.warn{color:var(--accent);font-size:13px;text-align:center;margin-top:8px;min-height:1em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="mon">卍</div>
+    <h1 id="title">お寺をより良くしていくための<br>アンケート</h1>
+    <p class="lead">これからのお寺づくりの参考にさせていただくため、<br>率直なご感想をお聞かせください。<br>タップで答えるだけ、1〜2分で終わります。</p>
+    <p class="lead hidden" id="saveNote" style="font-size:12.5px;margin-top:8px">ご回答は匿名でお寺に届きます。<br>お名前やご連絡先はお聞きしません。</p>
+  </header>
+
+  <section class="card">
+    <p class="q"><span class="n">一</span>どのようなご用件でお越しになりましたか？</p>
+    <p class="hint">ひとつお選びください</p>
+    <div class="chips" data-group="purpose" data-single></div>
+  </section>
+
+  <section class="card">
+    <p class="q"><span class="n">二</span>全体の満足度はいかがでしたか？</p>
+    <div class="stars" id="stars"></div>
+    <div class="starlabel" id="starlabel">星をタップしてください</div>
+  </section>
+
+  <section class="card">
+    <p class="q"><span class="n">三</span>良かったと感じた点は？</p>
+    <p class="hint">いくつでも（2〜3個がおすすめです）</p>
+    <div class="chips" data-group="good"></div>
+  </section>
+
+  <section class="card" id="improveCard">
+    <p class="q"><span class="n">四</span>もう少しこうだと良かった点は？</p>
+    <p class="hint">いくつでも。なければ「特になし」をお選びください</p>
+    <div class="chips" data-group="improve"></div>
+  </section>
+
+  <section class="card">
+    <p class="q"><span class="n">五</span>お越しになった後、どんなお気持ちになりましたか？</p>
+    <p class="hint">2つまで選べます</p>
+    <div class="chips" data-group="feeling" data-max="2"></div>
+  </section>
+
+  <section class="card">
+    <p class="q"><span class="n">六</span>どんな方におすすめしたいですか？</p>
+    <p class="hint">いくつでも（任意）</p>
+    <div class="chips" data-group="recommend"></div>
+  </section>
+
+  <section class="card">
+    <p class="q"><span class="n">七</span>ひとこと添えたいことがあれば</p>
+    <p class="hint">任意・このあとまとめる文章にも、そのまま入ります</p>
+    <textarea id="free" rows="3" placeholder="例：初めてで不安でしたが、丁寧に教えていただけました。"></textarea>
+  </section>
+
+  <button class="btn btn-main" id="makeBtn">回答を確認する</button>
+  <div class="warn" id="warn"></div>
+
+  <section class="card hidden" id="result" style="margin-top:18px">
+    <h2>ご回答ありがとうございました</h2>
+    <p class="hint" style="margin-left:0;line-height:1.8">いただいた内容を文章にまとめました。<br>よろしければ、Googleの口コミとしても共有していただけると、同じように迷っている方の参考になります。ご自身の言葉に自由に書き換えてください。</p>
+    <textarea id="out" rows="9"></textarea>
+    <div class="count" id="count"></div>
+    <div class="row">
+      <button class="btn btn-sub" id="againBtn">別の言い回しにする</button>
+    </div>
+    <div style="margin-top:12px">
+      <a class="btn btn-main" id="googleBtn" href="#" target="_blank" rel="noopener">コピーしてGoogleに投稿する</a>
+    </div>
+    <div style="margin-top:8px">
+      <button class="btn btn-sub" id="copyBtn">文章をコピーだけする</button>
+    </div>
+    <div class="steps">
+      <ol>
+        <li>「コピーしてGoogleに投稿する」を押します（文章は自動でコピーされます）</li>
+        <li>開いた画面で星の数を選びます</li>
+        <li>「この場所での体験」の欄を長押しして「ペースト」</li>
+        <li>「投稿」を押して完了です</li>
+      </ol>
+      <p style="margin:8px 0 0;color:var(--sub);font-size:12.5px">※ Googleアカウントが必要です。お名前を出したくない方は、Googleマップのプロフィールでニックネームを設定すると、その名前で表示されます。</p>
+    </div>
+  </section>
+
+  <p class="note">Googleへの投稿は任意です。<br>評価の内容にかかわらず、率直なお声をお寄せください。</p>
+</div>
+<div class="toast" id="toast">コピーしました</div>
+
+<script>
+/* ============ 設定（ここだけ書き換えればOK） ============ */
+const CONFIG = {
+  templeName: "佛心寺東京布教所",            // 例: "佛心寺"（空なら「こちらのお寺」と表記）
+  googleReviewUrl: "https://share.google/mdz2wtuYhhpaFbG8d"        // 例: "https://g.page/r/XXXXXXXX/review" （Googleビジネスプロフィールの「口コミを依頼」から取得）
+  ,saveUrl: ""   // 回答の保存先（スプレッドシートのApps Script「ウェブアプリ」のURL）。空なら保存しない
+};
+/* ======================================================== */
+
+const OPTIONS = {
+  purpose: [
+    ["hoyo","法要"],["ihai","位牌供養"],["soudan","ご相談"],["ws","ワークショップ"],["vr","VR終末期体験"],["mind","マインドフルネス"],
+    ["soshiki","葬儀・お通夜"],["eitai","永代供養・納骨"],["ohaka","お墓参り"],
+    ["sanpai","参拝"],["other","その他"]
+  ],
+  good: [
+    ["dandori","当日の段取りがスムーズ"],["ihaiTeinei","位牌を丁寧に扱っていただけた"],
+    ["wsNaiyo","ワークショップの内容"],["vrTaiken","VR体験の内容・リアルさ"],["furikaeri","体験後の振り返り・対話"],["mindGuide","瞑想の導き・ガイド"],["wsShoshin","初めてでも参加しやすい"],["junbi","事前準備の案内"],["koureisha","高齢の家族への配慮"],
+    ["hikae","控室・設備"],["kaishoku","会食・お供えの手配"],
+    ["jushoku","ご住職の人柄・対応"],["setsumei","説明がわかりやすい"],["howa","法話・お話"],
+    ["dokyo","心のこもった読経"],["keidai","境内の雰囲気"],["hiyou","費用が明瞭"],
+    ["soudan","相談しやすさ"],["shizuka","静かで落ち着く"]
+  ],
+  improve: [
+    ["wait","待ち時間"],["explain","事前の説明"],["contact","連絡のとりやすさ"],
+    ["parking","駐車場・アクセス"],["fee","費用の案内"],["none","特になし"]
+  ],
+  feeling: [
+    ["anshin","安心できた"],["karuku","心が軽くなった"],["shinobu","故人を偲ぶことができた"],
+    ["ochitsuku","心が落ち着いた"],["inochi","生き方を見つめ直せた"],["kazoku","家族を大切にしたいと思った"],["mata","また来たいと思った"]
+  ],
+  recommend: [
+    ["first","初めてお寺に相談する方"],["shuha","宗派にこだわらない方"],["eitai","永代供養を考えている方"],
+    ["family","家族で法事をしたい方"],["ihaiR","位牌の扱いに悩んでいる方"],["wsR","お寺の体験をしてみたい方"],["shukatsu","終活や生き方を考えたい方"],["iryo","医療・介護に関わる方"],["kokoro","心を整えたい方"]
+  ]
+};
+
+const OPEN = {
+  hoyo:["先日、法事でお世話になりました。","家族の法要をお願いしました。","法要でお伺いしました。"],
+  soshiki:["葬儀でお世話になりました。","家族の葬儀をお願いしました。","通夜・葬儀でお世話になりました。"],
+  eitai:["永代供養について相談に伺いました。","納骨のことで相談させていただきました。","永代供養を検討していて、お話を伺いに行きました。"],
+  ohaka:["お墓参りで伺いました。","お墓参りでいつもお世話になっています。"],
+  sanpai:["参拝に伺いました。","近くに来たので参拝させていただきました。"],
+  ihai:["位牌の供養をお願いしました。","実家の位牌の供養について相談し、お願いしました。","位牌の扱いに困っていたところ、供養をしていただきました。"],
+  vr:["VRで終末期を体験するプログラムに参加しました。","お寺で行われているVR終末期体験に参加しました。","人生の最期をVRで体験できると聞き、参加してみました。"],
+  mind:["マインドフルネスの会に参加しました。","お寺でのマインドフルネス瞑想に参加しました。","心を整えたくて、マインドフルネスの時間に参加しました。"],
+  ws:["お寺のワークショップに参加しました。","こちらで開かれているワークショップに参加させていただきました。","友人に誘われてワークショップに参加しました。"],
+  soudan:["相談したいことがあり、伺いました。","思い切ってお話を聞いていただきに伺いました。","なかなか人に話せないことを相談させていただきました。"],
+  other:["先日お伺いしました。","お世話になりました。"]
+};
+
+const GOOD = {
+  ihaiTeinei:["位牌を一つひとつ丁寧に扱ってくださり、気持ちよくお任せできました。","長年守ってきた位牌だったので、心を込めて供養していただけてほっとしました。"],
+  vrTaiken:["VRの映像がとてもリアルで、自分が最期を迎える立場になったように感じました。","想像していた以上に没入感があり、深く考えさせられる体験でした。"],
+  furikaeri:["体験のあとに気持ちを話し合う時間があり、一人で抱え込まずにすみました。","体験後の振り返りで、ほかの参加者の感じ方も聞けて学びになりました。"],
+  mindGuide:["ゆっくりとした導きのおかげで、初めてでも瞑想に集中できました。","呼吸の整え方をわかりやすく教えていただけました。"],
+  wsNaiyo:["ワークショップの内容がとても充実していて、あっという間の時間でした。","お寺ならではの内容で、ほかでは味わえない体験ができました。"],
+  wsShoshin:["初めての参加でしたが、丁寧に教えていただけたので安心して楽しめました。","初心者でも気軽に参加できる雰囲気がありがたかったです。"],
+  dandori:["当日の流れがとてもスムーズで、施主として慌てることなく過ごせました。","段取りを丁寧に組んでいただき、法要が滞りなく進みました。"],
+  junbi:["お供えや持ち物など、事前に必要なことを丁寧に教えていただけたので安心でした。","準備について細かく案内していただき、とても助かりました。"],
+  koureisha:["高齢の家族にも細やかに気を配っていただき、ありがたかったです。","足腰の弱い家族にも椅子を用意していただくなど、心配りが行き届いていました。"],
+  hikae:["控室もきれいで、参列した親族もゆったり過ごせました。","設備が整っていて、小さな子ども連れでも安心でした。"],
+  kaishoku:["会食やお供えの手配までご相談に乗っていただき、とても助かりました。","法要後の会食の段取りまでサポートしていただけました。"],
+  jushoku:["ご住職がとても穏やかで、こちらの話を丁寧に聞いてくださいました。","ご住職のお人柄が温かく、緊張せずにお話しできました。","ご住職の対応がとても丁寧で、気持ちよく過ごせました。"],
+  setsumei:["わからないことにも一つひとつわかりやすく説明していただけました。","流れや準備について丁寧に教えていただき、不安がなくなりました。","専門的なことも、かみくだいて説明してくださいました。"],
+  howa:["法話がわかりやすく、心に残るお話でした。","法話では身近な例を交えてお話しくださり、家族みんなで聞き入りました。","お話がとても心に響きました。"],
+  dokyo:["読経が心のこもったもので、身の引き締まる思いがしました。","丁寧な読経に、自然と手を合わせる気持ちになりました。"],
+  keidai:["境内はきれいに手入れされていて、清々しい雰囲気でした。","境内の空気がすがすがしく、気持ちが整いました。"],
+  hiyou:["費用についても事前に明確に教えていただけて安心でした。","お布施や費用のことも率直に説明していただけたので、迷わずにすみました。"],
+  soudan:["気軽に相談できる雰囲気で、話しやすかったです。","どんなことでも相談しやすい雰囲気がありがたかったです。"],
+  shizuka:["静かで落ち着いた空間で、ゆっくり過ごせました。","都会の喧騒を忘れるような、静かな時間を過ごせました。"]
+};
+
+const IMPROVE = {
+  wait:"待ち時間", explain:"事前の説明", contact:"連絡のとりやすさ",
+  parking:"駐車場やアクセスの案内", fee:"費用のご案内"
+};
+
+const FEEL = {
+  anshin:["おかげさまで、安心してお任せすることができました。","安心してお参りできました。"],
+  karuku:["帰る頃には、心が少し軽くなっていました。","お話しできて、気持ちがずいぶん楽になりました。"],
+  shinobu:["家族で故人をしっかりと偲ぶ、よい時間になりました。","故人のことをゆっくり思い出す、大切な時間になりました。"],
+  inochi:["これからの生き方をあらためて見つめ直すきっかけになりました。","限りある時間をどう生きるか、真剣に考える機会になりました。"],
+  kazoku:["家族や身近な人を、もっと大切にしたいと素直に思えました。","帰り道、家族に会いたくなりました。"],
+  ochitsuku:["心が静かに落ち着いていくのを感じました。","慌ただしい日々の中で、心を落ち着ける時間になりました。"],
+  mata:["また機会があればぜひ伺いたいと思います。","またお参りに来たいと思えるお寺です。"]
+};
+
+const RECO = (list) => pick([
+  `${list}にもおすすめできるお寺だと思います。`,
+  `${list}には特におすすめしたいです。`,
+  `${list}にも安心しておすすめできます。`
+]);
+
+const CLOSE = {
+  5:["本当にありがとうございました。","心より感謝しております。ありがとうございました。","ご縁をいただけて本当によかったです。ありがとうございました。"],
+  4:["ありがとうございました。","お世話になりました。ありがとうございました。"],
+  3:["ありがとうございました。"],
+  2:["今後に期待しています。"],
+  1:["今後に期待しています。"]
+};
+
+const CONNECT = ["また、","それから、","さらに、",""];
+const STARLABEL = ["","不満だった","やや不満だった","ふつう","満足","大満足"];
+
+/* ---------- 状態 ---------- */
+// length は「ふつう」固定（長さの質問は廃止）
+const state = { purpose:null, good:[], improve:[], feeling:[], recommend:[], length:"mid", rating:0 };
+
+/* ---------- UI組み立て ---------- */
+document.querySelectorAll(".chips").forEach(box=>{
+  const g = box.dataset.group, single = box.hasAttribute("data-single");
+  OPTIONS[g].forEach(([key,label])=>{
+    const b = document.createElement("button");
+    b.className="chip"; b.type="button"; b.textContent=label;
+    const on = single ? state[g]===key : state[g].includes(key);
+    b.setAttribute("aria-pressed", on);
+    b.onclick=()=>{
+      if(single){
+        state[g] = state[g]===key && g!=="length" ? null : key;
+        box.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed","false"));
+        if(state[g]) b.setAttribute("aria-pressed","true");
+      }else{
+        const i = state[g].indexOf(key);
+        const max = +box.dataset.max || 99;
+        if(i<0 && state[g].length>=max){ document.getElementById("warn").textContent=""; showToast(`${max}つまで選べます`); return; }
+        i>=0 ? state[g].splice(i,1) : state[g].push(key);
+        // 「特になし」は他の項目と同時に選べない
+        if(g==="improve" && i<0) state[g] = key==="none" ? ["none"] : state[g].filter(k=>k!=="none");
+        box.querySelectorAll(".chip").forEach((c,j)=>c.setAttribute("aria-pressed", state[g].includes(OPTIONS[g][j][0])));
+      }
+      document.getElementById("warn").textContent="";
+    };
+    box.appendChild(b);
+  });
+});
+
+const starsEl = document.getElementById("stars");
+for(let i=1;i<=5;i++){
+  const s=document.createElement("button");
+  s.className="star"; s.type="button"; s.textContent="★"; s.setAttribute("aria-label",`${i}つ星`);
+  s.onclick=()=>{
+    state.rating=i;
+    [...starsEl.children].forEach((c,j)=>c.classList.toggle("on", j<i));
+    document.getElementById("starlabel").textContent=STARLABEL[i];
+    document.getElementById("warn").textContent="";
+  };
+  starsEl.appendChild(s);
+}
+
+if(CONFIG.templeName) document.getElementById("title").innerHTML = `${CONFIG.templeName}を<br>より良くしていくための<br>アンケート`;
+
+/* ---------- 文章生成 ---------- */
+function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
+function shuffle(a){ return [...a].sort(()=>Math.random()-.5); }
+function joinJa(arr){
+  if(arr.length<=1) return arr.join("");
+  return arr.slice(0,-1).join("、") + "や" + arr[arr.length-1];
+}
+
+function generate(){
+  const s = state, parts = [];
+  // つなぎ言葉は、ひとつの文章の中で同じものを二度使わない
+  const used = new Set();
+  const conn = (list)=>{ const c = pick(list.filter(x=>!used.has(x))); if(c) used.add(c); return c; };
+  parts.push(pick(OPEN[s.purpose||"other"]));
+
+  const maxGood = s.length==="short" ? 2 : s.length==="mid" ? 3 : 9;
+  const goods = shuffle(s.good).slice(0,maxGood);
+  goods.forEach((g,i)=>{
+    let line = pick(GOOD[g]);
+    if(i>0) line = conn(CONNECT) + line;
+    parts.push(line);
+  });
+
+  const free = document.getElementById("free").value.trim();
+  if(free) parts.push(/[。！!？?]$/.test(free) ? free : free + "。");
+
+  const feels = s.length==="short" ? s.feeling.slice(0, goods.length<2 ? 1 : 0) : s.feeling;
+  feels.forEach((f,i)=>{ let l=pick(FEEL[f]); if(i>0) l = conn(["そして、","また、",""]) + l; parts.push(l); });
+
+  // 改善点は全員に聞くが、口コミ文に入れるのは星3以下のときだけ（星4・5はお寺への保存のみ）
+  const imps = s.improve.filter(k=>k!=="none");
+  if(s.rating<=3 && imps.length){
+    const items = joinJa(imps.map(k=>IMPROVE[k]));
+    parts.push(pick([`一方で、${items}については、もう少し良くなるとありがたいと感じました。`,`${items}については、改善されるとより安心できると感じました。`]));
+  }
+
+  if(s.recommend.length && s.length!=="short" && s.rating>=4){
+    const labels = OPTIONS.recommend.filter(([k])=>s.recommend.includes(k)).map(([,l])=>l);
+    parts.push(RECO(joinJa(labels)));
+  }
+
+  parts.push(pick(CLOSE[s.rating||5]));
+  return parts.join(s.length==="long" ? "\n" : "");
+}
+
+const out = document.getElementById("out");
+let edited = false;   // 参拝者が文章を手直ししたか
+function render(){
+  out.value = generate();
+  edited = false;
+  updateCount();
+}
+// 手直し済みの文章を、黙って上書きしない
+function renderIfOk(){
+  if(edited && !confirm("書き換えた文章が消えて、新しい文章に置き換わります。よろしいですか？")) return;
+  render();
+}
+out.addEventListener("input", ()=>{ edited = true; });
+function updateCount(){ document.getElementById("count").textContent = `${out.value.length}文字`; }
+out.addEventListener("input", updateCount);
+
+document.getElementById("makeBtn").onclick=()=>{
+  const w = document.getElementById("warn");
+  if(!state.purpose){ w.textContent="一の「ご用件」を選んでください"; return; }
+  if(!state.rating){ w.textContent="二の「満足度」を選んでください"; return; }
+  if(!state.good.length && !document.getElementById("free").value.trim()){ w.textContent="三の「良かった点」かひとことを入れてください"; return; }
+  renderIfOk();
+  saveAnswer();
+  const r = document.getElementById("result");
+  r.classList.remove("hidden");
+  r.scrollIntoView({behavior:"smooth", block:"start"});
+};
+document.getElementById("againBtn").onclick=renderIfOk;
+
+/* ---------- 回答の保存（匿名・お寺のスプレッドシートへ） ---------- */
+if(CONFIG.saveUrl){
+  document.getElementById("saveNote").classList.remove("hidden");
+  document.getElementById("makeBtn").textContent = "回答を送る";
+}
+const answerId = Date.now().toString(36) + Math.random().toString(36).slice(2,8); // 同じ人の押し直しは同じ行に上書き
+let lastSent = "";
+function saveAnswer(){
+  if(!CONFIG.saveUrl) return;
+  const s = state;
+  const lab = (g,keys)=>OPTIONS[g].filter(([k])=>keys.includes(k)).map(([,l])=>l).join("、");
+  const body = JSON.stringify({
+    id: answerId,
+    purpose: lab("purpose",[s.purpose]),
+    rating: s.rating,
+    good: lab("good",s.good),
+    improve: lab("improve",s.improve),
+    feeling: lab("feeling",s.feeling),
+    recommend: lab("recommend",s.recommend),
+    free: document.getElementById("free").value.trim()
+  });
+  if(body===lastSent) return;   // 内容が変わっていなければ送らない
+  lastSent = body;
+  // 保存に失敗しても、参拝者の操作は止めない
+  try{
+    fetch(CONFIG.saveUrl,{method:"POST",mode:"no-cors",keepalive:true,
+      headers:{"Content-Type":"text/plain;charset=utf-8"},body}).catch(()=>{});
+  }catch(_){}
+}
+
+/* ---------- コピー ---------- */
+const toast = document.getElementById("toast");
+function showToast(msg){ toast.textContent=msg; toast.classList.add("show"); setTimeout(()=>toast.classList.remove("show"),1800); }
+function copyText(){
+  // 同期コピーを先に試す（リンク遷移前に確実に終わらせるため）
+  let ok=false;
+  try{ out.focus(); out.select(); ok=document.execCommand("copy"); out.blur(); }catch(_){}
+  if(!ok && navigator.clipboard){
+    try{
+      // 後から失敗が分かった場合は、案内を出し直す
+      navigator.clipboard.writeText(out.value).catch(()=>showToast("文章を長押ししてコピーしてください"));
+      ok=true;
+    }catch(_){}
+  }
+  return ok;
+}
+document.getElementById("copyBtn").onclick=()=>{
+  showToast(copyText() ? "コピーしました" : "文章を長押ししてコピーしてください");
+};
+
+/* ---------- Googleリンク ---------- */
+const gBtn = document.getElementById("googleBtn");
+gBtn.addEventListener("click",()=>{ copyText(); showToast("コピーしました。貼り付けてください"); });
+gBtn.href = CONFIG.googleReviewUrl ||
+  "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(CONFIG.templeName || "お寺");
+</script>
+</body>
+</html>
