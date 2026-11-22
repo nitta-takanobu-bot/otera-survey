@@ -38,6 +38,15 @@ textarea:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
 .btn-main{background:var(--accent);color:#fff}
 .btn-main:disabled{background:#cbbfae;cursor:not-allowed}
 .btn-sub{background:#fff;color:var(--accent);border:1px solid var(--accent);padding:12px;font-size:14.5px}
+.ask{margin-top:18px;display:flex;gap:10px;align-items:flex-start}
+.kobu{width:78px;flex:none;margin-top:6px;animation:bob 2.6s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.bubble{position:relative;flex:1;background:#fff6ec;border:1.5px solid #f0cfa8;border-radius:18px;padding:14px 14px 4px;font-size:14px;line-height:1.85}
+.bubble::before{content:"";position:absolute;left:-9px;top:26px;border:8px solid transparent;border-right-color:#f0cfa8;border-left:0}
+.bubble::after{content:"";position:absolute;left:-6px;top:27px;border:7px solid transparent;border-right-color:#fff6ec;border-left:0}
+.bubble p{margin:0 0 10px}
+.ask-title{font-weight:700;font-size:15.5px;color:#c2552f}
+.btn-big{font-size:17px;padding:18px;box-shadow:0 4px 14px rgba(140,47,30,.25)}
 .btn-google{background:#fff;color:var(--ink);border:1.5px solid var(--ink)}
 .row{display:flex;gap:8px;margin-top:10px}
 .row .btn{flex:1}
@@ -107,14 +116,41 @@ textarea:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
 
   <section class="card hidden" id="result" style="margin-top:18px">
     <h2>ご回答ありがとうございました</h2>
-    <p class="hint" style="margin-left:0;line-height:1.8">いただいた内容を文章にまとめました。<br>よろしければ、Googleの口コミとしても共有していただけると、同じように迷っている方の参考になります。ご自身の言葉に自由に書き換えてください。</p>
+    <p class="hint" style="margin-left:0;line-height:1.8">いただいた内容を文章にまとめました。ご自身の言葉に自由に書き換えてください。</p>
     <textarea id="out" rows="9"></textarea>
     <div class="count" id="count"></div>
     <div class="row">
       <button class="btn btn-sub" id="againBtn">別の言い回しにする</button>
     </div>
+    <div class="ask">
+      <svg class="kobu" viewBox="0 0 100 110" aria-label="こぶったちゃん">
+        <ellipse cx="50" cy="96" rx="30" ry="12" fill="#e9b949"/>
+        <path d="M24 98 Q26 70 50 68 Q74 70 76 98 Z" fill="#c2552f"/>
+        <path d="M50 68 Q40 80 34 98" stroke="#a8432a" stroke-width="2" fill="none"/>
+        <circle cx="50" cy="44" r="27" fill="#fbe3c8"/>
+        <g fill="#5b4a3f">
+          <circle cx="34" cy="24" r="4.2"/><circle cx="42" cy="19" r="4.2"/><circle cx="50" cy="17.5" r="4.2"/><circle cx="58" cy="19" r="4.2"/><circle cx="66" cy="24" r="4.2"/>
+          <circle cx="29" cy="31" r="4"/><circle cx="71" cy="31" r="4"/>
+          <circle cx="50" cy="10" r="5"/>
+        </g>
+        <circle cx="50" cy="34" r="1.8" fill="#e0a43a"/>
+        <path d="M38 45 Q41 41.5 44 45" stroke="#4a3a30" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+        <path d="M56 45 Q59 41.5 62 45" stroke="#4a3a30" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+        <ellipse cx="35" cy="52" rx="4.5" ry="3" fill="#f4a9a0" opacity=".8"/>
+        <ellipse cx="65" cy="52" rx="4.5" ry="3" fill="#f4a9a0" opacity=".8"/>
+        <path d="M45 54 Q50 59 55 54" stroke="#4a3a30" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M46 84 L50 72 L54 84 Z" fill="#fbe3c8"/>
+      </svg>
+      <div class="bubble">
+        <p class="ask-title">こぶったちゃんの おねがい</p>
+        <p>ここまでお答えいただき、ありがとうございます。</p>
+        <p>よろしければ、このご感想を<b>Googleの口コミ</b>にも載せていただけませんか？</p>
+        <p>「どこのお寺に相談しようかな…」と迷っている方にとって、あなたの声がいちばんの道しるべになります。</p>
+        <p>下のボタンを押すと、文章が自動でコピーされます。<b>星を選んで貼り付けるだけ、1分ほど</b>で終わりますよ。</p>
+      </div>
+    </div>
     <div style="margin-top:12px">
-      <a class="btn btn-main" id="googleBtn" href="#" target="_blank" rel="noopener">コピーしてGoogleに投稿する</a>
+      <a class="btn btn-main btn-big" id="googleBtn" href="#" target="_blank" rel="noopener">コピーしてGoogleに投稿する ›</a>
     </div>
     <div style="margin-top:8px">
       <button class="btn btn-sub" id="copyBtn">文章をコピーだけする</button>
@@ -130,7 +166,7 @@ textarea:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
     </div>
   </section>
 
-  <p class="note">Googleへの投稿は任意です。<br>評価の内容にかかわらず、率直なお声をお寄せください。</p>
+  <p class="note">評価の内容にかかわらず、率直なお声をお寄せください。<br>投稿はご無理のない範囲でお願いいたします。</p>
 </div>
 <div class="toast" id="toast">コピーしました</div>
 
@@ -138,7 +174,7 @@ textarea:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
 /* ============ 設定（ここだけ書き換えればOK） ============ */
 const CONFIG = {
   templeName: "佛心寺東京布教所",            // 例: "佛心寺"（空なら「こちらのお寺」と表記）
-  googleReviewUrl: "https://share.google/mdz2wtuYhhpaFbG8d"        // 例: "https://g.page/r/XXXXXXXX/review" （Googleビジネスプロフィールの「口コミを依頼」から取得）
+  googleReviewUrl: "https://g.page/r/CW3bJUvFrjEqEAE/review"        // 例: "https://g.page/r/XXXXXXXX/review" （Googleビジネスプロフィールの「口コミを依頼」から取得）
   ,saveUrl: ""   // 回答の保存先（スプレッドシートのApps Script「ウェブアプリ」のURL）。空なら保存しない
 };
 /* ======================================================== */
