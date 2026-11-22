@@ -39,7 +39,7 @@ textarea:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
 .btn-main:disabled{background:#cbbfae;cursor:not-allowed}
 .btn-sub{background:#fff;color:var(--accent);border:1px solid var(--accent);padding:12px;font-size:14.5px}
 .ask{margin-top:18px;display:flex;gap:10px;align-items:flex-start}
-.kobu{width:66px;flex:none;margin-top:6px;animation:bob 2.6s ease-in-out infinite}
+.kobu{width:66px;height:66px;flex:none;margin-top:6px;border-radius:50%;object-fit:cover}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
 .bubble{position:relative;flex:1;background:#fff6ec;border:1.5px solid #f0cfa8;border-radius:18px;padding:14px 14px 4px;font-size:14px;line-height:1.85}
 .bubble::before{content:"";position:absolute;left:-9px;top:26px;border:8px solid transparent;border-right-color:#f0cfa8;border-left:0}
@@ -123,9 +123,9 @@ textarea:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
       <button class="btn btn-sub" id="againBtn">別の言い回しにする</button>
     </div>
     <div class="ask">
-      <img class="kobu" src="kobutta.png" alt="こぶったちゃん" width="66" height="66">
+      <img class="kobu" src="nitta.png" alt="佛心寺 新田崇信" width="66" height="66">
       <div class="bubble">
-        <p class="ask-title">こぶったちゃんの おねがい</p>
+        <p class="ask-title">佛心寺からのお願い</p>
         <p>ここまでお答えいただき、ありがとうございます。</p>
         <p>よろしければ、このご感想を<b>Googleの口コミ</b>にも載せていただけませんか？</p>
         <p>「どこのお寺に相談しようかな…」と迷っている方にとって、あなたの声がいちばんの道しるべになります。</p>
