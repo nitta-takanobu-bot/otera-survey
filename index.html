@@ -45,6 +45,7 @@ textarea:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
 .bubble::before{content:"";position:absolute;left:-9px;top:26px;border:8px solid transparent;border-right-color:#f0cfa8;border-left:0}
 .bubble::after{content:"";position:absolute;left:-6px;top:27px;border:7px solid transparent;border-right-color:#fff6ec;border-left:0}
 .bubble p{margin:0 0 10px}
+.paste-note{color:#c0392b}  /* 定型：貼り付け（ペースト）の一行は赤字 */
 .ask-title{font-weight:700;font-size:14.5px;color:#c2552f;white-space:nowrap}
 .btn-big{font-size:17px;padding:18px;box-shadow:0 4px 14px rgba(140,47,30,.25)}
 .btn-google{background:#fff;color:var(--ink);border:1.5px solid var(--ink)}
@@ -129,7 +130,7 @@ textarea:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
         <p>ここまでお答えいただき、ありがとうございます。</p>
         <p>よろしければ、このご感想を<b>Googleの口コミ</b>にも載せていただけませんか？</p>
         <p>「どこのお寺に相談しようかな…」と迷っている方にとって、あなたの声がいちばんの道しるべになります。</p>
-        <p>下のボタンを押すと、文章が自動でコピーされます。<br><b>星を選んで貼り付けるだけです。</b></p>
+        <p>下のボタンを押すと、文章が自動でコピーされます。<br><b class="paste-note">星を選んで貼り付ける（ペースト）だけです。</b></p>
         <p>大変お手数をおかけしますが、ご協力お願いします。</p>
       </div>
     </div>
